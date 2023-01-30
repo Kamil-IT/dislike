@@ -1,11 +1,11 @@
 package com.dislike.backend.bussines;
 
-import com.dislike.backend.api.model.VideoDataModification;
 import com.dislike.backend.api.model.VideoOperation;
 import com.dislike.backend.bussines.mapper.VideoMapperBusiness;
-import com.dislike.backend.bussines.model.VideoDataModificationBussines;
+import com.dislike.backend.bussines.model.GetVideoData;
+import com.dislike.backend.bussines.model.VideoDataModification;
 import com.dislike.backend.domain.Video;
-import com.dislike.backend.persistance.video.VideoPersistence;
+import com.dislike.backend.persistance.video.VideoPersistenceService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,29 +19,28 @@ import java.util.function.Consumer;
 @Service
 public class VideoServiceImpl implements VideoService {
 
-    private static Map<VideoOperation, Consumer<String>> videoModification;
+    private static Map<VideoOperation, Consumer<VideoDataModification>> videoModification;
 
-    private final VideoPersistence videoPersistence;
+    private final VideoPersistenceService videoPersistenceService;
     private final VideoMapperBusiness videoMapper;
 
     @PostConstruct
     void postConstructor(){
         videoModification = Map.of(
-                VideoOperation.DISLIKE, videoPersistence::dislike,
-                VideoOperation.UNDISLIKE, videoPersistence::undislike
+                VideoOperation.DISLIKE, videoPersistenceService::dislike,
+                VideoOperation.UNDISLIKE, videoPersistenceService::undislike
         );
     }
 
     @Override
-    public List<Video> getVideos(List<String> ids, String currentUser) {
-        return videoMapper.map(videoPersistence.getDislikesById(ids), currentUser);
+    public List<Video> getVideos(GetVideoData videoData) {
+        return videoMapper.map(videoPersistenceService.getDislikesById(videoData), videoData.user());
     }
 
     @Override
-    public void updateVideo(VideoDataModification videoDataModification, String currentUser) {
-        new VideoDataModificationBussines(videoDataModification.id(), videoDataModification.operation(), currentUser);
+    public void updateVideo(VideoDataModification videoDataModification) {
         Optional.ofNullable(videoModification.get(videoDataModification.operation()))
                 .orElseThrow(() -> new IllegalArgumentException("Video operation not found: " + videoDataModification))
-                .accept(videoDataModification.id());
+                .accept(videoDataModification);
     }
 }

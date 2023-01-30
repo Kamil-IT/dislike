@@ -2,5 +2,7 @@ package com.dislike.backend.bussines.model;
 
 import com.dislike.backend.api.model.VideoOperation;
 
-public record VideoDataModificationBussines(String id, VideoOperation operation, String user) {
+import java.util.List;
+
+public record GetVideoData(List<String> ids, String user) {
 }

@@ -1,6 +1,6 @@
 package com.dislike.backend.api.model;
 
-public record VideoDataModification(
+public record VideoDataModificationRequest(
         String id,
         VideoOperation operation
 ) {
