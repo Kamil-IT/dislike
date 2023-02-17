@@ -5,6 +5,7 @@ import com.dislike.backend.domain.Video;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -15,7 +16,7 @@ public class VideoMapperBusiness {
                 .collect(Collectors.toList());
     }
     private Video map(VideoDislikes dislikesById, String currentUser) {
-        List<String> usersWhichDislikes = dislikesById.usersWhichDislikes();
+        Set<String> usersWhichDislikes = dislikesById.usersWhichDislikes();
         return new Video(
                 dislikesById.id(),
                 usersWhichDislikes.size(),

@@ -34,7 +34,10 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public List<Video> getVideos(GetVideoData videoData) {
-        return videoMapper.map(videoPersistenceService.getDislikesById(videoData), videoData.user());
+        return videoMapper.map(
+                videoPersistenceService.getDislikesById(videoData),
+                videoData.user()
+        );
     }
 
     @Override
