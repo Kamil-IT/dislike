@@ -35,7 +35,6 @@ jobs:
       - image: cimg/base:2022.06
     
     steps:
-      # Checkout the code as the first step.
       - checkout
 
       - setup_remote_docker:
@@ -48,7 +47,7 @@ jobs:
       - run:
           name: Publish Docker Image to Docker Hub
           command:   |
-            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push devcivil/backend:latest
 
 
