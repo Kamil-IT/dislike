@@ -28,18 +28,26 @@ jobs:
       IMAGE_NAME: building-on-ci
     docker:
       - image: cimg/openjdk:17.0
+        auth:
+          username: devcivil
+          password: $DOCKERHUB_PASSWORD
       - image: circleci/buildpack-deps:stretch
+      - image: cimg/base:2022.06
     
     steps:
       # Checkout the code as the first step.
       - checkout
-      # Use mvn clean and package as the standard maven build phase
+
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+
       - run:
           name: Build image
           command: mvn spring-boot:build-image -Dspring-boot.build-image.imageName=devcivil/backend
       - run:
           name: Publish Docker Image to Docker Hub
-          command:  |
+          command:   |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push devcivil/backend:latest
 
